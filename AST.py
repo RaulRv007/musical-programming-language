@@ -39,3 +39,11 @@ class OutputNode:
     def __init__(self, var_name):
         self.var_name = var_name
 
+class InputNode:
+    def __init__(self, var_name):
+        self.var_name = var_name
+
+    def __repr__(self):
+        return f"InputNode({self.var_name})"
+
+

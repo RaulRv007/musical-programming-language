@@ -1,5 +1,6 @@
 import math
-from AST import IfNode, ComparisonNode, BlockNode, AssignmentNode, StringAssignmentNode, VariableDeclarationNode, OutputNode
+from platform import node
+from AST import IfNode, ComparisonNode, BlockNode, AssignmentNode, StringAssignmentNode, VariableDeclarationNode, OutputNode, InputNode
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -199,9 +200,69 @@ class Parser:
                         if cadence_name == 'CHORD_V-CHORD_I':
 
                             return OutputNode(var_name)
+                        else:
+                            self.position -= 7
+                            return None
             self.position -= 3  # Restore position if no output found
             return None
     
+    def parse_input(self):
+        var_name_tokens = []
+        var_length = 0
+
+        # Skip leading RESTs
+        while self.current_token() and self.current_token().type == "REST":
+            return None
+
+        while self.current_token() and self.current_token().type == "CHORD":
+            var_name_tokens.append(self.current_token().value)
+            self.advance()
+        var_name = "-".join(var_name_tokens)
+        var_length = len(var_name_tokens)
+        if var_length < 2:
+            return None
+        if var_name == '':
+            return None
+
+        if var_name not in self.variables:
+            print(f'variable {var_name} not found')
+            return f"Error: Undeclared variable '{var_name}'"
+
+        while self.current_token() and self.current_token().type == "REST":
+            self.advance()
+        
+        var_name_tokens = []
+        
+        while self.current_token() and self.current_token().type == "CHORD":
+            var_name_tokens.append(self.current_token().value)
+            self.advance()
+            var_name2 = "-".join(var_name_tokens)
+            if len(var_name_tokens) > var_length:
+                self.position -= 3
+                return None
+            
+        if var_name == var_name2:
+            # Look for cadence CHORD_I - CHORD_V
+            cadence_tokens = []
+            while self.current_token() and self.current_token().type == "REST":
+                self.advance()
+            while self.current_token() and self.current_token().type == "CHORD":
+
+                cadence_tokens.append(self.current_token().value)
+                self.advance()
+                if len(cadence_tokens) > var_length:
+                    self.position -= 3
+                    return None
+                if len(cadence_tokens) == 2:
+                    if "-".join(cadence_tokens) == 'CHORD_I-CHORD_V':
+                        return InputNode(var_name)
+                    else:
+                        self.position -= 7
+                        return None
+
+        self.position -= 3  # Restore position if no cadence match
+        return None
+
     
     def parse_statement(self):
         if_node = self.parse_if()
@@ -393,6 +454,15 @@ class Parser:
             if node.var_name in self.variables:
                 return f"Output: {self.variables[node.var_name].value}"
             return f"Error: Variable '{node.var_name}' not declared"
+        elif isinstance(node, InputNode):
+            user_input = input(f"Enter value for {node.var_name}: ")
+            # Try to parse to number, fallback to string
+            try:
+                value = float(user_input) if '.' in user_input else int(user_input)
+            except ValueError:
+                value = user_input
+            self.variables[node.var_name].value = value
+            return f"Input received for {node.var_name}: {value}"
 
 
         return None
@@ -418,6 +488,7 @@ class Parser:
             node = (
                 self.parse_statement() or
                 self.parse_output() or
+                self.parse_input() or  
                 self.parse_variable_declaration() or
                 self.parse_variable_assignment() or
                 self.parse_string_assignment() 
