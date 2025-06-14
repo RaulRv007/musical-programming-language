@@ -1,0 +1,26 @@
+<program> ::= <key_signature> <statement>+
+
+<statement> ::= <declaration> | <assignment> | <expression>
+
+<key_signature> ::= <chord>
+
+<declaration> ::= <declare_motif> <variable_name> <value_expression>
+
+<assignment> ::= <variable_name> <assignment_motif> <value_expression>
+
+<declare_motif> ::= "dotted-eighth" "sixteenth" "quarter"  ; unique rhythm pattern
+
+<assignment_motif> ::= "staccato-triplet"                  ; another rhythmic identifier
+
+<variable_name> ::= <interval_motif>+                      ; melodic signature
+
+<value_expression> ::= <value_note>+                       ; notes determine numeric value
+
+<value_note> ::= <note> [<duration>]                       ; direction + duration encode value
+
+<assignment> ::= <variable_name> <assignment_motif> <expression>
+
+<expression> ::= <operation_motif>+
+
+<operation_motif> ::= <melody_pattern>  ; melodic contour encoding value + operation
+
