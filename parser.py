@@ -44,10 +44,9 @@ class Parser:
             self.match("NOTE", "eighthts")):
 
             var_name_tokens = []
-            while self.current_token() and (self.current_token().type == "CHORD" or self.current_token().type == "REST"):
-                if self.current_token().type == "REST":
-                    self.advance()
-                    continue
+            note_assignment = False
+            
+            while self.current_token() and (self.current_token().type == "CHORD"):
                 var_name_tokens.append(self.current_token().value)
                 self.advance()
                 
@@ -68,6 +67,7 @@ class Parser:
             }
 
             while self.current_token() and self.current_token().type == "NOTE":
+                note_assignment = True
                 note = self.current_token()
                 val = duration_map.get(note.duration)
                 next_note = self.tokens[self.position + 1] if self.position + 1 < len(self.tokens) else None
@@ -86,6 +86,24 @@ class Parser:
                         value += val
                     self.advance()
                     break
+
+            if self.current_token() and self.current_token().type == "REST" and not note_assignment:
+                self.advance()
+            var_name_tokens = []
+
+            while self.current_token() and self.current_token().type == "CHORD" and not note_assignment:
+                var_name_tokens.append(self.current_token().value)
+                self.advance()
+
+            if not note_assignment and len(var_name_tokens) > 0:
+                var_name_value = "-".join(var_name_tokens)
+                if len(var_name_tokens) < 2:
+                    return None
+                if var_name_value not in self.variables:
+                    return f"Error: Undeclared variable '{var_name_value}'"
+
+                return AssignmentNode(var_name, self.variables[var_name_value].value)
+
 
             return AssignmentNode(var_name, value)
 
