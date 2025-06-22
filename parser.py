@@ -96,14 +96,21 @@ class Parser:
                 "whole": 4.0,
             }
 
+            first_time = False
+            counter = 0
             while self.current_token() and self.current_token().type == "NOTE":
+                
                 note_assignment = True
                 note = self.current_token()
-                val = duration_map.get(note.duration)
                 next_note = self.tokens[self.position + 1] if self.position + 1 < len(self.tokens) else None
+                val = duration_map.get(next_note.duration)
+                if not first_time and note and isinstance(note.degree, int):
+                    value = duration_map.get(note.duration)
+                    first_time = True
 
                 if next_note and isinstance(next_note.degree, int) and isinstance(note.degree, int):
-                    if next_note.degree > note.degree:
+                    counter += 1
+                    if next_note.degree >= note.degree:
                         if val:
                             value += val
                         self.advance()
@@ -112,10 +119,15 @@ class Parser:
                             value -= val
                         self.advance()
                 else:
-                    if val:
-                        value += val
+                    '''if counter == 0:
+                        if val:
+                            value += val
+                        self.advance()
+                        break
+                    else:'''
                     self.advance()
                     break
+                            
 
             if self.current_token() and self.current_token().type == "REST" and not note_assignment:
                 self.advance()
@@ -560,9 +572,8 @@ class Parser:
                 self.advance()
 
         
-        if variable.value is not value_ant:
-            operation = ''
-            return MathOperationNode(self.variables[variable.name].value, operation, value)
+
+        return MathOperationNode(self.variables[variable.name].value, operation, value)
             
         return None
 
