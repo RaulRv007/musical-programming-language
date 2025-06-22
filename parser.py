@@ -1,12 +1,13 @@
 import math
 from platform import node
-from AST import IfNode, ComparisonNode, BlockNode, AssignmentNode, StringAssignmentNode, VariableDeclarationNode, OutputNode, InputNode, WhileNode, MathOperationNode, UpdateNode 
+from AST import IfNode, ComparisonNode, BlockNode, AssignmentNode, StringAssignmentNode, VariableDeclarationNode, OutputNode, InputNode, WhileNode, MathOperationNode, UpdateNode, AssignmentVariableNode 
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.position = 0
         self.variables = {}
         self.output_tokens = []
+        self.output = []
 
     def current_token(self):
         return self.tokens[self.position] if self.position < len(self.tokens) else None
@@ -41,8 +42,8 @@ class Parser:
     
     def parse_variable_update(self):
         # Match rhythm pattern: 16th, 16th, 8th
-        if (self.match("NOTE", "16th") and
-            self.match("NOTE", "16th") and
+        if (self.match("NOTE", "16ths") and
+            self.match("NOTE", "16ths") and
             self.match("NOTE", "eighth")):
 
             # Get variable name
@@ -62,6 +63,7 @@ class Parser:
 
             # Evaluate the expression immediately to assign the value
             evaluated_value = self.evaluate(math_expr)
+            print(f"Updating variable {var_name} with value {evaluated_value}")
             return UpdateNode(var_name, math_expr.operator, evaluated_value)
 
         return None
@@ -130,9 +132,11 @@ class Parser:
                 if var_name_value not in self.variables:
                     return f"Error: Undeclared variable '{var_name_value}'"
 
-                return AssignmentNode(var_name, self.variables[var_name_value].value)
+                print(f"Assigning value {self.variables[var_name_value].value} to {var_name}")
+                return AssignmentVariableNode(var_name, var_name_value)
+            
 
-
+            print(f"Assigning value {value} to {var_name}")
             return AssignmentNode(var_name, value)
 
         return None
@@ -190,6 +194,7 @@ class Parser:
                 self.advance()
 
             string_value = "".join(chars)
+            print(f"Assigning string '{string_value}' to variable '{var_name}'")
             return StringAssignmentNode(var_name, string_value)
 
         return None
@@ -246,6 +251,7 @@ class Parser:
                         cadence_name = "-".join(var_name_tokens)
                         if cadence_name == 'CHORD_V-CHORD_I':
                             self.position += 3
+                            print(f"Outputting variable {var_name} with value {self.variables[var_name].value}")
                             return OutputNode(var_name)
                         else:
                             self.position -= 6
@@ -323,7 +329,7 @@ class Parser:
 
     def parse_body(self):
         statements = []
-        max_statements = 10
+        max_statements = 40
         count = 0
 
         while self.current_token() and count < max_statements:
@@ -341,11 +347,13 @@ class Parser:
             pos_backup = self.position  # Save current position
 
             stmt = (
-                self.parse_variable_assignment() or
-                self.parse_variable_update() or
-                self.parse_string_assignment() or
+                self.parse_statement() or
                 self.parse_output() or
-                self.parse_input()
+                self.parse_input() or  
+                self.parse_variable_declaration() or
+                self.parse_string_assignment() or
+                self.parse_variable_update() or
+                self.parse_variable_assignment() 
             )
 
             if stmt:
@@ -356,6 +364,7 @@ class Parser:
 
             count += 1
 
+        print(f"Parsed {len(statements)} statements in the block.")
         return BlockNode(statements)
 
     
@@ -383,6 +392,7 @@ class Parser:
 
         # Parse the block
         body = self.parse_body()
+        print(f"Parsed IF statement with condition: {condition} and body: {body}")
         return IfNode(condition, body)
 
     def parse_while(self):
@@ -407,6 +417,11 @@ class Parser:
 
         # Parse the block
         body = self.parse_body()
+        try:
+            print(f"Parsed WHILE statement with condition: {condition} and body: {body}")
+        except Exception as e:
+            print(f"----: {e}")
+            return None
         return WhileNode(condition, body)
 
     
@@ -460,13 +475,15 @@ class Parser:
                 op = "LESSER"
             elif abs(tokens[0].degree - tokens[1].degree) == 0:
                 op = "EQUAL"
+            elif abs(tokens[0].degree - tokens[1].degree) == 2:
+                op = "UNEQUAL"
             else:
                 print(f"Error: Invalid comparison between {tokens[0].degree} and {tokens[1].degree}")
                 return None
 
 
         
-
+        print(f"Parsed expression: {first} {op} {second}")
         return ComparisonNode(first, op, second)
 
     def parse_math_expression(self, variable):
@@ -481,13 +498,18 @@ class Parser:
         }
         value_ant = variable.value
         operation = ''
+        value = 0
         while self.current_token() and self.current_token().type == "NOTE":
             note = self.current_token()
             val = durations.get(note.duration)
             next_note = self.tokens[self.position + 1] if self.position + 1 < len(self.tokens) else None
             # Only determine the operation once, before the first operation
             if operation == '':
-                if next_note and next_note.degree != note.degree:
+                if (self.match("NOTE", "eighth") and
+                    self.match("NOTE", "16th") and
+                    self.match("NOTE", "16th")):
+                    operation = 'DIV'
+                elif next_note and next_note.degree != note.degree:
                     operation = 'ADD'
                 elif next_note and next_note.degree == note.degree:
                     operation = 'MUL'
@@ -497,31 +519,50 @@ class Parser:
                     if next_note.degree > note.degree:
                         if val:
                             #variable.value += val
-                            return MathOperationNode(self.variables[variable.name].value, operation, val)
+                            value += val
+                            #return MathOperationNode(self.variables[variable.name].value, operation, val)
 
                         self.advance()
                     elif next_note.degree < note.degree:
                         if val:
                             #variable.value -= val
-                            return MathOperationNode(self.variables[variable.name].value, operation, -val)
+                            value -= val
+                            #return MathOperationNode(self.variables[variable.name].value, operation, -val)
                         self.advance()
                 else:
                     if val:
                         #variable.value += val
-                        return MathOperationNode(self.variables[variable.name].value, operation, val)
+                        if value == 0:
+                            
+                            value += val
+                        return MathOperationNode(self.variables[variable.name].value, operation, value)
 
-                    self.advance()
-                    break
             elif operation == 'MUL':
+                value = 0
                 #variable.value *= val
-                return MathOperationNode(self.variables[variable.name].value, operation, val)
+                while self.current_token() and self.current_token().type == "NOTE":
+                    note = self.current_token()
+                    val = durations.get(note.duration)  
+                    value += val
+                    self.advance()
+            elif operation == 'DIV':
+                value = 0
+                #variable.value *= val
+                while self.current_token() and self.current_token().type == "NOTE":
+                    note = self.current_token()
+                    val = durations.get(note.duration)  
+                    value += val
+                    self.advance()
+
+
+                return MathOperationNode(self.variables[variable.name].value, operation, value)
 
                 self.advance()
 
         
         if variable.value is not value_ant:
             operation = ''
-            return MathOperationNode(self.variables[variable.name].value, operation, variable.value)
+            return MathOperationNode(self.variables[variable.name].value, operation, value)
             
         return None
 
@@ -557,33 +598,25 @@ class Parser:
             right_val = right_var.value
 
             if node.operator == "GREATER":
-                return left_val > right_val
+                return left_val >= right_val
             elif node.operator == "LESSER":
-                return left_val < right_val
+                return left_val <= right_val
             elif node.operator == "EQUAL":
                 return left_val == right_val
+            elif node.operator == "UNEQUAL":
+                return left_val != right_val
             return False
         
         elif isinstance(node, MathOperationNode):
             if node.operator == "ADD":
-                return node.left + node.right
+                return node.right
             elif node.operator == "SUB":
-                result = node.operator[0]
-                for v in node.operator[1:]:
-                    result -= v
+                result = node.right
                 return result
             elif node.operator == "MUL":
-                result = 1
-                for v in node.operator:
-                    result *= v
-                return result
+                return node.right
             elif node.operator == "DIV":
-                result = node.operator[0]
-                for v in node.operator[1:]:
-                    if v == 0:
-                        return "Error: Division by zero"
-                    result /= v
-                return result
+                return node.right
 
 
         elif isinstance(node, VariableDeclarationNode):
@@ -597,6 +630,12 @@ class Parser:
             if node.var_name in self.variables:
                 self.variables[node.var_name].value = node.value
                 return f"Assigned {node.value} to {node.var_name}"
+            else:
+                return f"Error: Variable '{node.var_name}' not declared"
+        elif isinstance(node, AssignmentVariableNode):
+            if node.var_name in self.variables:
+                self.variables[node.var_name].value = self.variables[node.var_2].value
+                return f"Assigned {self.variables[node.var_name].value} to {node.var_name}"
             else:
                 return f"Error: Variable '{node.var_name}' not declared"
         elif isinstance(node, UpdateNode):
@@ -633,6 +672,7 @@ class Parser:
             return f"Error: Variable '{node}' not declared"
         elif isinstance(node, OutputNode):
             if node.var_name in self.variables:
+                self.output_tokens.append(f"Output: {self.variables[node.var_name].value}")
                 return f"Output: {self.variables[node.var_name].value}"
             return f"Error: Variable '{node.var_name}' not declared"
         elif isinstance(node, InputNode):
@@ -652,7 +692,7 @@ class Parser:
 
     def parse(self):
         results = []
-        max_skips = 20
+        max_skips = 500
         rest_streak = 0
 
         while self.current_token():
@@ -670,9 +710,9 @@ class Parser:
                 self.parse_output() or
                 self.parse_input() or  
                 self.parse_variable_declaration() or
+                self.parse_string_assignment() or
                 self.parse_variable_update() or
-                self.parse_variable_assignment() or
-                self.parse_string_assignment() 
+                self.parse_variable_assignment() 
             )
 
             # 🧼 Catch and print string errors directly

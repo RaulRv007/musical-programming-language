@@ -1,0 +1,69 @@
+# === Variable Declarations ===
+
+declare Fizz         *
+assign Fizz = FIZZ   *
+
+declare Buzz         *
+assign Buzz = BUZZ   *
+
+declare FizzBuzz     *
+assign FizzBuzz = FIZZBUZZ *
+
+declare max-number *
+assign max-number = (take input)  # Set your max FizzBuzz value *
+
+declare counter    //I-II *
+assign counter = 1 *
+
+declare three    *
+assign three = 3*
+
+declare five*
+assign five = 5*
+
+declare zero*
+assign zero = 0*
+
+declare mod-three
+
+declare mod-five
+
+# === Begin Loop: while counter ≤ max-number ===
+WHILE (counter LESSER-EQUAL max-number):
+
+    # -- mod-three = counter --*
+    assign mod-three = counter*
+
+    # -- mod-five = counter --*
+    assign mod-five = counter*
+
+    # while mod-three ≥ three: subtract 3*
+    WHILE (mod-three GREATER-EQUAL three):*
+        update mod-three with SUB by three*
+
+
+    # while mod-five ≥ five: subtract 5*
+    WHILE (mod-five GREATER-EQUAL five):*
+        update mod-five with SUB by five*
+
+
+    # === FizzBuzz Conditions ===
+
+    # if mod-three == 0 and mod-five == 0:
+    IF (mod-three EQUAL zero):*
+        IF (mod-five EQUAL zero):*
+            output "FizzBuzz"*
+        If (mod-five UNEQUAL zero):*
+            output "Fizz"*
+
+    IF (mod-three UNEQUAL zero):*
+        IF (mod-five EQUAL zero):*
+            output "Buzz"*
+        If (mod-five UNEQUAL zero):*
+            output counter*
+
+
+    # === Increment counter ===
+    update counter with ADD 1
+
+END

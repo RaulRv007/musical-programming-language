@@ -43,6 +43,11 @@ class AssignmentNode:
         self.var_name = var_name
         self.value = value
 
+class AssignmentVariableNode:
+    def __init__(self, var_name, var_2):
+        self.var_name = var_name
+        self.var_2 = var_2
+
 class UpdateNode:
     def __init__(self, var_name, operator, value):
         self.var_name = var_name  
@@ -50,7 +55,7 @@ class UpdateNode:
         self.value = value
 
     def __repr__(self):
-        return f"UpdateNode(var_name={self.var_name}, operation={self.operation})"
+        return f"UpdateNode(var_name={self.var_name}, operation={self.operator})"
 
 class StringAssignmentNode:
     def __init__(self, var_name, string_value):

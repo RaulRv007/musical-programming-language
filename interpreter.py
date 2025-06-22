@@ -3,7 +3,7 @@ from lexer import Lexer
 from parser import Parser
 if __name__ == "__main__":
     # Create a Song instance with the file path
-    song = Song('sheets/while_trial.mxl')
+    song = Song('sheets/fizz_buzz.mxl')
     lexer = Lexer(song.processed)
     tokens = lexer.tokenize()
     print(f'Tokens: {tokens}')
@@ -11,4 +11,5 @@ if __name__ == "__main__":
     
     results = parser.parse()
     print(f'Results: {results}')
+    print(f'OUTPUT: {parser.output_tokens}')
 
