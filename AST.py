@@ -5,6 +5,22 @@ class IfNode:
 
     def __repr__(self):
         return f"IfNode(condition={self.condition}, body={self.body})"
+    
+class WhileNode:
+    def __init__(self, condition, body):
+        self.condition = condition  # e.g., ComparisonNode
+        self.body = body  # e.g., BlockNode
+
+    def __repr__(self):
+        return f"WhileNode(condition={self.condition}, body={self.body})"
+    
+class MathOperationNode:
+    def __init__(self, left, operator, right):
+        self.left = left  # Can be variable name or literal
+        self.operator = operator  # 'ADD', 'SUB', 'MUL', 'DIV'
+        self.right = right
+    def __repr__(self):
+        return f"MathOperationNode({self.left} {self.operator} {self.right})"
 
 class ComparisonNode:
     def __init__(self, left, operator, right):
@@ -26,6 +42,15 @@ class AssignmentNode:
     def __init__(self, var_name, value):
         self.var_name = var_name
         self.value = value
+
+class UpdateNode:
+    def __init__(self, var_name, operator, value):
+        self.var_name = var_name  
+        self.operator = operator  
+        self.value = value
+
+    def __repr__(self):
+        return f"UpdateNode(var_name={self.var_name}, operation={self.operation})"
 
 class StringAssignmentNode:
     def __init__(self, var_name, string_value):
