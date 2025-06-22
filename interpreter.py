@@ -1,6 +1,7 @@
 from song import Song
 from lexer import Lexer
 from parser import Parser
+import sys
 if __name__ == "__main__":
     # Create a Song instance with the file path
     song = Song('sheets/max_function.mxl')

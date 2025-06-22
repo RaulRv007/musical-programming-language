@@ -336,6 +336,53 @@ if variable1 >= variable2:
 This musical structure encodes the conditional logic directly into the composition.
 
 
+### WHILE LOOP
+An **while loop** is written using a *Plagal Cadence*—the cadence formed by the V-IV chords of the key. For example:
+- In **C major**: `Gmaj–Fmaj`
+- In **F major**: `Cmaj–Bbmaj`
+- In **A minor**: `Emaj-Dm`
+
+This cadence is chosen because it historically expresses that the song is going to continue, it is a reaffirmation of continuation.
+
+#### Syntax
+
+1. **Plagal Cadence** (V-IV)
+2. *Silence* (any duration)
+3. **First variable to compare** (chord progression)
+4. *Silence* (any duration)
+5. **Second variable to compare** (chord progression)
+6. **Logic operator** (same table)
+7. **Body** (any logic to execute if the condition is true)
+8. **Close body** with an *Authentic Cadence* (V–I), e.g., `Gmaj–Cmaj` in C major
+
+#### Example
+
+![Greater comparison reference](Documentation/images/while_loop_greater.png.png)
+
+*Example in F major:*
+
+This demonstrates an `while` conditional using a greater-than-or-equal comparison. In Python, the equivalent logic would be:
+
+```python
+while variable1 >= variable2:
+    # Body
+```
+
+**Explanation:**
+
+- The first two chords form a *Plagal Cadence* (V-IV), signaling the start of the conditional.
+- A silence separates each section.
+- The first variable (as a chord progression) is played.
+- Another silence.
+- The second variable (as a chord progression) is played.
+- Another silence.
+- The next two notes form an interval of a fifth, which indicates the `GREATER OR EQUAL` operator (the condition is true if the first variable's value is greater than or equal to the second's).
+
+This musical structure encodes the conditional logic directly into the composition.
+
+
+
+
 
 
 
