@@ -276,3 +276,66 @@ The same duration map applies:
         - Melody gives value to divide by (e.g., quarter + quarter = 2)
 
 ---
+
+### IF Conditional
+
+An **if conditional** is written using a *Half Cadence*—the cadence formed by the I–V chords of the key. For example:
+- In **C major**: `Cmaj–Gmaj`
+- In **F major**: `Fmaj–Cmaj`
+- In **A minor**: `Am–Emaj`
+
+This cadence is chosen because it historically expresses doubt or questioning.
+
+#### Syntax
+
+1. **Half Cadence** (I–V)
+2. *Silence* (any duration)
+3. **First variable to compare** (chord progression)
+4. *Silence* (any duration)
+5. **Second variable to compare** (chord progression)
+6. **Logic operator** (see table below)
+7. **Body** (any logic to execute if the condition is true)
+8. **Close body** with an *Authentic Cadence* (V–I), e.g., `Gmaj–Cmaj` in C major
+
+#### Logic Operators
+
+| Operator         | Musical Interval Example         | Description                                              |
+|------------------|---------------------------------|----------------------------------------------------------|
+| GREATER OR EQUAL | Interval of a fifth from tonic  | e.g., in F major: F, C                                  |
+| LESSER OR EQUAL  | Interval of a fourth from tonic | e.g., in C major: C, F                                  |
+| EQUAL            | Tonic note played twice         | e.g., in any key: tonic note played twice                |
+| UNEQUAL          | Interval of a third from tonic  | e.g., in G major: G, B                                  |
+
+> **Note:**  
+> To close the body of the conditional, use an **Authentic Cadence** (V–I), which marks the end of the block.
+The Authentic cadence is one of the most conclusive sounds in western music, and historically it is been used to mark the ending of different sections
+
+#### Example
+
+![Greater comparison reference](Documentation/images/greater_comparison.png)
+
+*Example in F major:*
+
+This demonstrates an `if` conditional using a greater-than-or-equal comparison. In Python, the equivalent logic would be:
+
+```python
+if variable1 >= variable2:
+    # Body
+```
+
+**Explanation:**
+
+- The first two chords form a *Half Cadence* (I–V), signaling the start of the conditional.
+- A silence separates each section.
+- The first variable (as a chord progression) is played.
+- Another silence.
+- The second variable (as a chord progression) is played.
+- Another silence.
+- The next two notes form an interval of a fifth, which indicates the `GREATER OR EQUAL` operator (the condition is true if the first variable's value is greater than or equal to the second's).
+
+This musical structure encodes the conditional logic directly into the composition.
+
+
+
+
+
