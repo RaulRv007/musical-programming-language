@@ -3,6 +3,7 @@
 *A programming language where code is composed like music.*
 
 ---
+![logo](LOGO.png)
 
 **BitSonata** is an almost **Turing-complete programming language** based entirely on musical structure. In BitSonata, writing a program means composing a song. Variables, expressions, control flow, and logic are expressed through **melody, rhythm, harmony, and musical motifs**.
 
@@ -82,6 +83,10 @@ It's been mainly tested with `.mxl`
 ## 📦 Coming Soon
 
 - More freesom when composing
+- for loops
+- ELSE conditionals
+- break statement
+- array support
 - Live interpreter with MIDI output
 - Audio input for live performances (vibe coding at its mamximum exponent)
 - Visual editor for composing, turns the music into pseudocode so it is easier to code
