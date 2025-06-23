@@ -17,11 +17,6 @@
     - [If Conditional](#if-conditional)
         - [Logic Operators](#logic-operators)
     - [While Loop](#while-loop)
-- [File Format and Extensions](#file-format-and-extensions)
-- [Sample Program](#sample-program)
-- [Usage](#usage)
-- [Future Work](#future-work)
-- [License](#license)
 
 ---
 
