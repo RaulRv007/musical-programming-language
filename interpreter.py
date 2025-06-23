@@ -4,7 +4,7 @@ from parser import Parser
 import sys
 if __name__ == "__main__":
     # Create a Song instance with the file path
-    song = Song('sheets/max_function.mxl')
+    song = Song('sheets/Mr_lam_F#minor.mxl')
     lexer = Lexer(song.processed)
     tokens = lexer.tokenize()
     print(f'Tokens: {tokens}')

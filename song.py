@@ -1,4 +1,5 @@
 from music21 import *
+from music21 import scale
 
 class Note:
     def __init__(self, degree, isChord=False, figure='whole', notes=None, staccato=False, isRest=False):
@@ -81,7 +82,15 @@ class Song:
 
     def get_roman_from_pitch(self, note_obj, key):
         try:
-            scale_degrees = key.getScale().getScaleDegreeFromPitch(note_obj.pitch)
-            return str(scale_degrees) if scale_degrees else "?"
+            # Use the correct scale type based on the key's mode
+            if key.mode == 'major':
+                current_scale = scale.MajorScale(key.tonic)
+            elif key.mode == 'minor':
+                current_scale = scale.MinorScale(key.tonic)
+            else:
+                return "?"
+
+            degree = current_scale.getScaleDegreeFromPitch(note_obj.pitch)
+            return str(degree) if degree else "?"
         except:
             return "?"

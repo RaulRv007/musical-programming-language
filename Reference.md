@@ -29,6 +29,21 @@ BitSonata turns programming into musical composition. Each program begins with a
 The language is interpreted, designed to be readable both as code and as sheet music, enabling you to **hear your program** as a melody.
 
 ---
+## What does the language support?
+
+BitSonata supports the following features:
+
+- **Variable declaration**
+- **Float values storage**
+- **String values storage**
+- **If conditionals**
+- **Logic operators:** `>=`, `<=`, `==`, `!=`
+- **While loops**
+- **Basic arithmetic:** multiplication, addition, subtraction, and division
+- **Assignment of values from other variables:**  
+    e.g., `variable1 = variable2`
+
+
 
 ## Language Concepts
 

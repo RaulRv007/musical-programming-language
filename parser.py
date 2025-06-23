@@ -261,7 +261,7 @@ class Parser:
                         var_name_tokens.append(self.current_token().value)
                         var_name_tokens.append(self.tokens[self.position + 1].value)
                         cadence_name = "-".join(var_name_tokens)
-                        if cadence_name == 'CHORD_V-CHORD_I':
+                        if cadence_name == 'CHORD_V-CHORD_I' or cadence_name == 'CHORD_V-CHORD_i':
                             self.position += 3
                             print(f"Outputting variable {var_name} with value {self.variables[var_name].value}")
                             return OutputNode(var_name)
