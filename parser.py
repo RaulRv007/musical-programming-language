@@ -216,6 +216,7 @@ class Parser:
             var_name_tokens = []
             var_length = 0
             counter = 0
+            backup_pos = self.position
             while self.current_token() and self.current_token().type == "REST":
                 #self.advance()
                 return None
@@ -249,7 +250,7 @@ class Parser:
                 self.advance()
                 var_name2 = "-".join(var_name_tokens)
                 if len(var_name_tokens) > var_length:
-                    self.position -= 3
+                    self.position = backup_pos
                     return None
 
                 if var_name2 == var_name:
@@ -266,7 +267,7 @@ class Parser:
                             print(f"Outputting variable {var_name} with value {self.variables[var_name].value}")
                             return OutputNode(var_name)
                         else:
-                            self.position -= 6
+                            self.position = backup_pos
                             return None
             self.position -= 3  # Restore position if no output found
             return None
@@ -319,7 +320,7 @@ class Parser:
                     self.position -= 3
                     return None
                 if len(cadence_tokens) == 2:
-                    if "-".join(cadence_tokens) == 'CHORD_I-CHORD_V':
+                    if "-".join(cadence_tokens) == 'CHORD_I-CHORD_V' or "-".join(cadence_tokens) == 'CHORD_i-CHORD_V':
                         return InputNode(var_name)
                     else:
                         self.position -= 7
